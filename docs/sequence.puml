@@ -1,0 +1,57 @@
+@startuml
+title Payroll application - class diagram
+
+package "sequence diagram" {
+  class PayrollApplication <<SpringBootApplication>> {
+    +main(String[] args)
+  }
+
+  class EmployeeController <<RestController>> {
+    +List<Employee> all()
+    +Employee one(Long id)
+  }
+
+  class EmployeeRepository <<Repository>> {
+    +findAll()
+    +findById(Long)
+    +save(Employee)
+  }
+
+  class LoadDatabase <<Component\ , CommandLineRunner>> {
+    +run(String... args)
+  }
+
+  class Employee {
+    -Long id
+    -String name
+    -String role
+  }
+
+  class EmployeeNotFoundException <<RuntimeException>> {
+    +EmployeeNotFoundException(Long id)
+  }
+
+  class EmployeeNotFoundAdvice <<ControllerAdvice>> {
+    +handleNotFound(Exception)
+  }
+}
+
+' Relations
+EmployeeController --> EmployeeRepository : uses
+EmployeeRepository --> Employee : manages
+LoadDatabase --> EmployeeRepository : saves\ sample\ data
+EmployeeNotFoundAdvice --> EmployeeNotFoundException : handles
+PayrollApplication ..> LoadDatabase : component\ scanned
+
+@enduml
+
+== Initialization ==
+
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+== Repetition ==
+
+Alice -> Bob: Another authentication Request
+Alice <-- Bob: another authentication Response
+@enduml
