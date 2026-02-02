@@ -63,8 +63,14 @@ After cloning this repository:
 
 ## Test using http requests manually
 
-//TODO
-
+* GET the full list of employees (expected HTTP 200). Pipe response to jq to pretty-print the JSON.
+```bash
+    curl.exe -s -X GET http://localhost:8080/api/v1/employees | jq
+```
+* GET the employee with id 1. Pipe response to jq to pretty-print the JSON object for that employee.
+```bash
+    curl.exe -s -X GET http://localhost:8080/api/v1/employees/1 | jq
+```
 ## Run the tests
 
 * For all tests classes
