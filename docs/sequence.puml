@@ -1,57 +1,71 @@
 @startuml
-title Payroll application - class diagram
+title Payroll application - class diagram (updated)
 
 package "sequence diagram" {
   class PayrollApplication <<SpringBootApplication>> {
-    +main(String[] args)
+    +PayrollApplication()
+    +main(String[])
   }
 
   class EmployeeController <<RestController>> {
-    +List<Employee> all()
-    +Employee one(Long id)
+    +EmployeeController(EmployeeRepository)
+    +one(Long) : Employee
+    +all() : List~Employee~
   }
 
-  class EmployeeRepository <<Repository>> {
+  interface EmployeeRepository <<Repository>> {
     +findAll()
     +findById(Long)
     +save(Employee)
   }
 
   class LoadDatabase <<Component\ , CommandLineRunner>> {
-    +run(String... args)
+    +LoadDatabase()
+    +initDatabase(EmployeeRepository) : CommandLineRunner
   }
 
   class Employee {
-    -Long id
-    -String name
-    -String role
+    -id : Long
+    -name : String
+    -role : String
+    +Employee(String, String)
+    +Employee()
+    +equals(Object) : boolean
+    +hashCode() : int
+    +toString() : String
+    +getName() : String
+    +getId() : Long
+    +getRole() : String
   }
 
   class EmployeeNotFoundException <<RuntimeException>> {
-    +EmployeeNotFoundException(Long id)
+    +EmployeeNotFoundException(Long)
   }
 
   class EmployeeNotFoundAdvice <<ControllerAdvice>> {
-    +handleNotFound(Exception)
+    +EmployeeNotFoundAdvice()
+    +employeeNotFoundHandler(EmployeeNotFoundException) : String
+  }
+
+  class EmployeeGetTest {
+    +EmployeeGetTest()
+    +given_an_existing_employee()
+    +when_getting_all_employees_then_success()
+    +when_getting_existing_employee_then_success()
+  }
+
+  class PayrollApplicationTests {
+    +PayrollApplicationTests()
+    +contextLoads() : void
   }
 }
 
 ' Relations
-EmployeeController --> EmployeeRepository : uses
+EmployeeController --> EmployeeRepository : repository
 EmployeeRepository --> Employee : manages
-LoadDatabase --> EmployeeRepository : saves\ sample\ data
+LoadDatabase --> EmployeeRepository : init / saves sample data
 EmployeeNotFoundAdvice --> EmployeeNotFoundException : handles
-PayrollApplication ..> LoadDatabase : component\ scanned
+EmployeeGetTest --> EmployeeRepository : uses
+PayrollApplication ..> LoadDatabase : component scanned
 
-@enduml
-
-== Initialization ==
-
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-
-== Repetition ==
-
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
 @enduml
