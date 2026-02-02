@@ -2,39 +2,74 @@
 title Payroll - Class Diagram
 skinparam classAttributeIconSize 0
 
-package payroll{
+package payroll {
 
-    package Controllers{
-        class Employee{
-            - repository Repository.Employee;
-        }
-        class EmployeeNotFoundAdvice()
-        class EmployeeNotFoundException()
+  package controllers {
+    class EmployeeController {
+      + List~Employee~ all()
+      + Employee one(Long id)
     }
 
-    package Entities{
-        class Employee()
+    class EmployeeNotFoundAdvice {
+      + handle(EmployeeNotFoundException) : ResponseEntity~Object~
     }
 
-    package Repositories{
-        class Employee()
-        class LoadDatabase()
+    class EmployeeNotFoundException {
+      + EmployeeNotFoundException(Long id)
+    }
+  }
+
+  package entities {
+    class Employee {
+      - Long id
+      - String name
+      - String role
+      + getId() : Long
+      + getName() : String
+      + getRole() : String
+    }
+  }
+
+  package repositories {
+    interface EmployeeRepository {
+      + List~Employee~ findAll()
+      + Optional~Employee~ findById(Long id)
     }
 
-    class PayrollApplication{
-        + {static} main (args : string[])
+    class LoadDatabase {
+      + CommandLineRunner init(EmployeeRepository repository)
     }
+  }
+
+  class PayrollApplication {
+    + {static} main(args : String[])
+  }
 }
 
-package springframework{
+package infrastructure {
+  class DispatcherServlet <<framework>>
+  class HandlerMapping <<framework>>
+  class HttpMessageConverter <<framework>>
+  class EntityManager <<jpa>>
+  class Database <<db>>
 }
 
-package java.util.List{
+' Relations application-level
+payroll::controllers::EmployeeController --> payroll::repositories::EmployeeRepository : uses
+payroll::controllers::EmployeeController --> payroll::entities::Employee : returns/creates
+payroll::repositories::EmployeeRepository ..> payroll::entities::Employee : manages
+payroll::repositories::EmployeeRepository --> infrastructure::EntityManager : delegates to
+payroll::repositories::LoadDatabase --> payroll::repositories::EmployeeRepository : init
+payroll::controllers::EmployeeNotFoundAdvice --> payroll::controllers::EmployeeNotFoundException : handles
+payroll::controllers::EmployeeController ..> payroll::controllers::EmployeeNotFoundException : throws
 
-}
+' Relations infra-level (to represent the HTTP handling flow)
+infrastructure::DispatcherServlet --> infrastructure::HandlerMapping : resolve handler
+infrastructure::HandlerMapping --> payroll::controllers::EmployeeController : route -> method
+payroll::controllers::EmployeeController --> infrastructure::HttpMessageConverter : serialize response
+infrastructure::EntityManager --> infrastructure::Database : SQL
 
-' Relations
-payroll --> springframework
-
+' External dependencies
+payroll --> infrastructure
 
 @enduml

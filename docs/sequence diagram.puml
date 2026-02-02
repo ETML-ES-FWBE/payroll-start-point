@@ -1,0 +1,46 @@
+@startuml
+participant Client
+participant Server as "Tomcat/Jetty"
+participant Dispatcher as "DispatcherServlet"
+participant Mapping as "HandlerMapping"
+participant Controller as "EmployeeController"
+participant Repository as "EmployeeRepository"
+participant JPA as "JPA / EntityManager"
+participant DB as "Database"
+participant Converter as "HttpMessageConverter"
+participant Advice as "ControllerAdvice / ErrorHandler"
+
+== Liste complète ==
+Client -> Server: GET /api/v1/employees
+Server -> Dispatcher: forward request
+Dispatcher -> Mapping: resolve handler
+Mapping -> Controller: invoke all()
+Controller -> Repository: repository.findAll()
+Repository -> JPA: execute query
+JPA -> DB: SQL SELECT ...
+DB --> JPA: result rows
+JPA --> Repository: List<Employee>
+Repository --> Controller: List<Employee>
+Controller -> Converter: serialize to JSON
+Converter --> Dispatcher: response body
+Dispatcher --> Client: 200 OK + JSON
+
+== Récupérer par id ==
+Client -> Server: GET /api/v1/employees/1
+Server -> Dispatcher: forward request
+Dispatcher -> Mapping: resolve handler
+Mapping -> Controller: invoke one(id)
+Controller -> Repository: repository.findById(id)
+alt Employee trouvé
+    Repository --> Controller: Optional<Employee> (present)
+    Controller -> Converter: serialize to JSON
+    Converter --> Dispatcher: response body
+    Dispatcher --> Client: 200 OK + JSON
+else Employee absent
+    Repository --> Controller: Optional.empty
+    Controller -> Dispatcher: throw EmployeeNotFoundException
+    Dispatcher -> Advice: handle exception
+    Advice --> Dispatcher: 404 Not Found
+    Dispatcher --> Client: 404 Not Found
+end
+@enduml
