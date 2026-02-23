@@ -39,7 +39,6 @@ public class EmployeeController {
 
     }
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Employee> hireEmployee(@RequestBody Employee employee) {
         Employee created = EmployeeService.hire(employee);
         URI location = ServletUriComponentsBuilder
