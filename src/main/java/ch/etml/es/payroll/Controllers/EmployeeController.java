@@ -38,6 +38,11 @@ public class EmployeeController {
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
 
     }
+
+/* curl sample :
+    curl -i -X POST -H "Content-Type: application/json" -d '{"name":"John","role":"Supervisor"}' localhost:8080/api/v1/employees
+    */
+
     @PostMapping("")
     public ResponseEntity<Employee> hireEmployee(@RequestBody Employee employee) {
         Employee created = EmployeeService.hire(employee);
