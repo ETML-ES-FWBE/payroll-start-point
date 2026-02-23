@@ -1,4 +1,4 @@
-package ch.etml.es.payroll.Repositories;
+package ch.etml.es.payroll.repositories;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +15,8 @@ public class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(EmployeeRepository repository){
         return args->{
-            log.info("Preloading " + repository.save(new ch.etml.es.payroll.Entities.Employee("Bilbo Baggins", "burglar")));
-            log.info("Preloading " + repository.save(new ch.etml.es.payroll.Entities.Employee("Frodo Baggins", "thief")));
+            log.info("Preloading " + repository.save(new ch.etml.es.payroll.entities.Employee("Bilbo Baggins", "burglar")));
+            log.info("Preloading " + repository.save(new ch.etml.es.payroll.entities.Employee("Frodo Baggins", "thief")));
         };
     }
 }

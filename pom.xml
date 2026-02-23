@@ -8,7 +8,7 @@
 		<version>3.2.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>ch.cpnv.es</groupId>
+	<groupId>ch.etml.es</groupId>
 	<artifactId>payroll</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>payroll</name>

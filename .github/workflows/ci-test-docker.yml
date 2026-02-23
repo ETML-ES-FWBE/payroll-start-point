@@ -1,0 +1,32 @@
+name: CI - Tests - Docker
+
+on:
+  push:
+    branches: [
+      "main",
+      "release/*",
+      "hotfix/*",
+      "develop",
+      "feature/*",
+      "bugfix/*"
+    ]
+  pull_request:
+    branches: [
+      "main",
+      "release/*",
+      "hotfix/*",
+      "develop",
+      "feature/*",
+      "bugfix/*"
+    ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)

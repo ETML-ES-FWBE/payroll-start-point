@@ -1,8 +1,8 @@
-package ch.etml.es.payroll.Controllers;
+package ch.etml.es.payroll.controllers;
 
-import ch.etml.es.payroll.Entities.Employee;
+import ch.etml.es.payroll.entities.Employee;
 import ch.etml.es.payroll.PayrollApplication;
-import ch.etml.es.payroll.Repositories.EmployeeRepository;
+import ch.etml.es.payroll.repositories.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 )
 @ActiveProfiles("test")
 class EmployeePostTest {
+
+    private static final String BASE_URL = "/v1/employees";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -44,7 +46,7 @@ class EmployeePostTest {
         // WHEN
         ResponseEntity<Employee> response =
                 restTemplate.postForEntity(
-                        "/api/v1/employees",
+                        BASE_URL,
                         request,
                         Employee.class
                 );
@@ -77,7 +79,7 @@ class EmployeePostTest {
         // WHEN
         ResponseEntity<String> response =
                 restTemplate.postForEntity(
-                        "/api/v1/employees",
+                        BASE_URL,
                         request,
                         String.class
                 );
