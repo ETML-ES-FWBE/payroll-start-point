@@ -1,11 +1,7 @@
 package ch.etml.es.payroll.Controllers;
-import ch.etml.es.payroll.Entities.Employee;
 import ch.etml.es.payroll.Repositories.EmployeeRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
@@ -34,12 +30,6 @@ public class EmployeeController {
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
 
     }
-    /*
-    @PostMapping("/api/v1/employees")
-    @ResponseStatus(HttpStatus.CREATED)
-        ch.etml.es.payroll.Entities.Employee NewEmployee(@RequestBody ch.etml.es.payroll.Entities.Employee newEmployee) {
-        return repository.save(newEmployee);
-    }*/
     @PostMapping("/api/v1/employees")
     @ResponseStatus(HttpStatus.CREATED)
     public ch.etml.es.payroll.Entities.Employee newEmployee(@RequestBody ch.etml.es.payroll.Entities.Employee newEmployee) {
@@ -50,7 +40,7 @@ public class EmployeeController {
             throw new EmployeeAlreadyExistException(newEmployee);
         }
 
-        // 3. Sinon, on enregistre
+
         return repository.save(newEmployee);
     }
 }
