@@ -1,8 +1,16 @@
 package ch.etml.es.payroll.Controllers;
+import ch.etml.es.payroll.Entities.Employee;
 import ch.etml.es.payroll.Repositories.EmployeeRepository;
+import ch.etml.es.payroll.services.EmployeeService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.List;
+
+@RequestMapping("/api/v1/employees")
 
 @RestController
 public class EmployeeController {
@@ -16,31 +24,32 @@ public class EmployeeController {
     /* curl sample :
     curl -X GET localhost:8080/api/v1/employees | jq
     */
-    @GetMapping("/api/v1/employees")
-    List<ch.etml.es.payroll.Entities.Employee> all(){
+    @GetMapping("")
+    List<Employee> all(){
         return repository.findAll();
     }
 
     /* curl sample :
     curl -X GET localhost:8080/api/v1/employees/1
     */
-    @GetMapping("/api/v1/employees/{id}")
-    ch.etml.es.payroll.Entities.Employee one(@PathVariable Long id){
+    @GetMapping("/{id}")
+    Employee one(@PathVariable Long id){
         return repository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
 
     }
-    @PostMapping("/api/v1/employees")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public ch.etml.es.payroll.Entities.Employee newEmployee(@RequestBody ch.etml.es.payroll.Entities.Employee newEmployee) {
-        boolean exists = repository.findAll().stream()
-                .anyMatch(emp -> emp.getName().equalsIgnoreCase(newEmployee.getName()));
+    public ResponseEntity<Employee> hireEmployee(@RequestBody Employee employee) {
+        Employee created = EmployeeService.hire(employee);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
 
-        if (exists) {
-            throw new EmployeeAlreadyExistException(newEmployee);
-        }
-
-
-        return repository.save(newEmployee);
+        return ResponseEntity
+                .created(location)
+                .body(created);
     }
 }
