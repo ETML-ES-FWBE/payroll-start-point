@@ -14,7 +14,7 @@ public class EmployeeService {
         EmployeeService.repository = repository;
     }
 
-    public static Employee hire(Employee employee) {
+    public static Employee create(Employee employee) {
         Employee existing = repository.findByName(employee.getName())
                 .orElse(null);
 

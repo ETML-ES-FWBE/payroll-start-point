@@ -40,7 +40,7 @@ class EmployeePostTest {
     }
 
     @Test
-    void when_hiring_new_employee_then_employee_is_created_and_persisted() {
+    void when_posting_new_employee_then_employee_is_created_and_persisted() {
         // GIVEN
         Employee newEmployee = new Employee("Doe", "Supervisor");
 
@@ -71,7 +71,7 @@ class EmployeePostTest {
     }
 
     @Test
-    void when_hiring_existing_employee_then_conflict_is_returned() {
+    void when_posting_existing_employee_then_conflict_is_returned() {
         // GIVEN
         Employee existingEmployee = new Employee("Doe", "Supervisor");
         employeeRepository.save(existingEmployee);

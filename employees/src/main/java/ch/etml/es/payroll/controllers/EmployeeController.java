@@ -43,8 +43,8 @@ public class EmployeeController {
             -d "{\"name\": \"Russel George\", \"role\": \"gardener\"}"
     */
     @PostMapping("")
-    public ResponseEntity<Employee> hireEmployee(@RequestBody Employee employee) {
-        Employee created = EmployeeService.hire(employee);
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+        Employee created = EmployeeService.create(employee);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
