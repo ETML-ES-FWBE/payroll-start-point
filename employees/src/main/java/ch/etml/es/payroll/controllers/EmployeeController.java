@@ -9,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/employees")
@@ -43,7 +44,8 @@ public class EmployeeController {
             -d "{\"name\": \"Russel George\", \"role\": \"gardener\"}"
     */
     @PostMapping("")
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<Employee> createEmployee(
+            @RequestBody Employee employee) {
         Employee created = EmployeeService.create(employee);
 
         URI location = ServletUriComponentsBuilder
@@ -55,6 +57,33 @@ public class EmployeeController {
         return ResponseEntity
                 .created(location)
                 .body(created);
+    }
+
+    /* curl sample :
+    curl -i -X PUT localhost:8080/api/v1/employees/2 ^
+        -H "Content-type:application/json" ^
+        -d "{\"name\": \"Samwise Bing\", \"role\": \"peer-to-peer\"}"
+    */
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> upsertEmployee(
+            @PathVariable Long id,
+            @RequestBody Employee employee
+    ) {
+        Optional<Employee> existing = repository.findById(id);
+
+        employee.setId(id);
+        Employee saved = repository.save(employee);
+
+        if (existing.isPresent()) {
+            return ResponseEntity.ok(saved);
+        } else {
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .build()
+                    .toUri();
+
+            return ResponseEntity.created(location).body(saved);
+        }
     }
 
     /* curl sample :
