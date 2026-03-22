@@ -1,7 +1,6 @@
 package ch.etml.es.payroll.controllers;
 
 import ch.etml.es.payroll.entities.Department;
-import ch.etml.es.payroll.repositories.DepartmentRepository;
 import ch.etml.es.payroll.services.DepartmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,42 +8,35 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/departments")
 public class DepartmentController {
 
-    private final DepartmentRepository repository;
+    private final DepartmentService departmentService;
 
-    DepartmentController(DepartmentRepository repository){
-        this.repository = repository;
+    public DepartmentController(DepartmentService departmentService) {
+        this.departmentService = departmentService;
     }
 
-    /* curl sample :
-    curl -X GET localhost:8080/api/v1/departements | jq
-    */
+    /* GET all departments */
     @GetMapping("")
-    List<Department> all(){
-        return repository.findAll();
+    public List<Department> all() {
+        return departmentService.findAll();
     }
 
-    /* curl sample :
-    curl -X GET localhost:8080/api/v1/departments/1
-    */
+    /* GET one department by ID */
     @GetMapping("/{id}")
-    Department one(@PathVariable Long id){
-        return repository.findById(id)
+    public Department one(@PathVariable Long id) {
+        return departmentService.findById(id)
                 .orElseThrow(() -> new DepartmentNotFoundException(id));
     }
 
-    /* curl sample :
-        curl -i -X POST localhost:8080/api/v1/departments ^
-            -H "Content-type:application/json" ^
-            -d "{\"acronym\": \"MKT\", \"description\": \"Marketing\"}"
-    */
+    /* CREATE a new department */
     @PostMapping("")
     public ResponseEntity<Department> createDepartment(@RequestBody Department department) {
-        Department created = DepartmentService.create(department);
+        Department created = departmentService.create(department);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -55,5 +47,17 @@ public class DepartmentController {
         return ResponseEntity
                 .created(location)
                 .body(created);
+    }
+
+    /* HIRE an employee (add employee ID to department) */
+    @PostMapping("/{departmentId}/employees")
+    public ResponseEntity<Department> hireEmployee(
+            @PathVariable Long departmentId,
+            @RequestBody Map<String, Long> body
+    ) {
+        Long employeeId = body.get("employee_id");
+        Department updated = departmentService.hireEmployee(departmentId, employeeId);
+
+        return ResponseEntity.ok(updated);
     }
 }
